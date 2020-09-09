@@ -26,16 +26,15 @@ cordapp` folder and click `Open`
     i. Add a new SDK if required by clicking `New…` and selecting the JDK’s folder
 
 7. Open the `Project` view by clicking `View > Tool Windows > Project`
-8. Run the test in `src/test/java/java_bootcamp/ProjectImportedOKTest.java`. It should pass!
 
 ## Links to useful resources
 
 This project contains example state, contract and flow implementations:
 
-* `src/main/java/java_examples/ArtState`
-* `src/main/java/java_examples/ArtContract`
-* `src/main/java/java_examples/ArtTransferFlowInitiator`
-* `src/main/java/java_examples/ArtTransferFlowResponder`
+* `src/main/java/java_examples/PessoaState`
+* `src/main/java/java_examples/PessoaContract`
+* `src/main/java/java_examples/CadastrarPessoaFlowInitiator`
+* `src/main/java/java_examples/CadastrarPessoaFlowResponder`
 
 There are also several web resources that you will likely find useful for this
 bootcamp:
@@ -50,54 +49,55 @@ bootcamp:
 
 Our CorDapp will have three parts:
 
-### The TokenState
+### The PessoaState
 
-States define shared facts on the ledger. Our state, TokenState, will define a
-token. It will have the following structure:
+States define shared facts on the ledger. Our state, PessoaState, will define a
+person. It will have the following structure:
 
     -------------------
     |                 |
-    |   TokenState    |
+    |   PessoaState    |
     |                 |
-    |   - issuer      |
-    |   - owner       |
-    |   - amount      |
+    |   - cpf         |
+    |   - nome        |
+    |   - dono        |
     |                 |
     -------------------
 
-### The TokenContract
+### The PessoaContract
 
-Contracts govern how states evolve over time. Our contract, TokenContract,
-will define how TokenStates evolve. It will only allow the following type of
-TokenState transaction:
+Contracts govern how states evolve over time. Our contract, PessoaContract,
+will define how PessoaStates evolve. It will only allow the following type of
+PessoaState transaction:
 
     -------------------------------------------------------------------------------------
     |                                                                                   |
     |    - - - - - - - - - -                                     -------------------    |
     |                                              ▲             |                 |    |
-    |    |                 |                       | -►          |   TokenState    |    |
+    |    |                 |                       | -►          |   PessoaState   |    |
     |            NO             -------------------     -►       |                 |    |
-    |    |                 |    |      Issue command       -►    |   - issuer      |    |
-    |          INPUTS           |     signed by issuer     -►    |   - owner       |    |
-    |    |                 |    -------------------     -►       |   - amount > 0  |    |
+    |    |                 |    |      Issue command       -►    |   - cpf         |    |
+    |          INPUTS           |     signed by dono     -►    |     - nome        |    |
+    |    |                 |    -------------------     -►       |   - dono        |    |
     |                                              | -►          |                 |    |
     |    - - - - - - - - - -                       ▼             -------------------    |
     |                                                                                   |
     -------------------------------------------------------------------------------------
 
               No inputs             One issue command,                One output,
-                                 issuer is a required signer       amount is positive
+                                 issuer is a required signer       person is valid
 
-To do so, TokenContract will impose the following constraints on transactions
-involving TokenStates:
+To do so, PessoaContract will impose the following constraints on transactions
+involving PessoaStates:
 
 * The transaction has no input states
 * The transaction has one output state
 * The transaction has one command
-* The output state is a TokenState
-* The output state has a positive amount
-* The command is an Issue command
-* The command lists the TokenState's issuer as a required signer
+* The output state is a PessoaState
+* The output state has a valid cpf and nome
+* The output state has a unique cpf registered
+* The command is an CadastarPessoa command
+* The command lists the PessoaState's dono as a required signer
 
 ### The TokenIssueFlow
 
@@ -112,7 +112,7 @@ automate the following steps:
          a transaction                |                       |
               |
         Adds the output               |                       |
-          TokenState
+          PessoaState
               |                       |                       |
            Adds the
          Issue command                |                       |
@@ -161,9 +161,9 @@ Once you've finished the CorDapp's code, run it with the following steps:
 * Open the nodes are started, go to the terminal of Party A (not the notary!)
   and run the following command to issue 99 tokens to Party B:
 
-    `flow start TokenIssueFlow owner: PartyB, amount: 99`
+    `flow start examples.CadastrarPessoaFlowInitiator "cpf": "0123456789-00", "nome": "Person Name", dono: "CidadaoA"`
 
 * You can now see the tokens in the vaults of Party A and Party B (but not 
   Party C!) by running the following command in their respective terminals:
 
-    `run vaultQuery contractStateType: bootcamp.TokenState`
+    `run vaultQuery contractStateType: examples.PessoaState`
