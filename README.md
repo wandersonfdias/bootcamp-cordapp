@@ -99,9 +99,9 @@ involving PessoaStates:
 * The command is an CadastarPessoa command
 * The command lists the PessoaState's dono as a required signer
 
-### The TokenIssueFlow
+### The CadastrarPesssoaFlow
 
-Flows automate the process of updating the ledger. Our flow, TokenIssueFlow, will
+Flows automate the process of updating the ledger. Our flow, CadastrarPesssoaFlow, will
 automate the following steps:
 
             Issuer                  Owner                  Notary
@@ -111,11 +111,14 @@ automate the following steps:
         Starts building
          a transaction                |                       |
               |
+        Validate                      |                       |
+        PessoaState
+              |                       |                       |
         Adds the output               |                       |
           PessoaState
               |                       |                       |
            Adds the
-         Issue command                |                       |
+         CadastrarPesssoa command     |                       |
               |
          Verifies the                 |                       |
           transaction
@@ -158,12 +161,14 @@ Once you've finished the CorDapp's code, run it with the following steps:
     * Windows:   `build\nodes\runnodes.bat`
     * macOS:     `build/nodes/runnodes`
 
-* Open the nodes are started, go to the terminal of Party A (not the notary!)
-  and run the following command to issue 99 tokens to Party B:
+* Open the nodes are started, go to the terminal of Cidadao A (not the notary!) and run the following command:
+    
+    ```bash
+    flow start examples.CadastrarPessoaFlowInitiator "cpf": "0123456789-00", "nome": "Person Name", dono: "CidadaoA"
+    ```
 
-    `flow start examples.CadastrarPessoaFlowInitiator "cpf": "0123456789-00", "nome": "Person Name", dono: "CidadaoA"`
-
-* You can now see the tokens in the vaults of Party A and Party B (but not 
-  Party C!) by running the following command in their respective terminals:
-
-    `run vaultQuery contractStateType: examples.PessoaState`
+* You can now see the persons in the vaults of Cidadao A by running the following command in their respective terminals:
+    
+    ```bash
+    run vaultQuery contractStateType: examples.PessoaState
+    ```
